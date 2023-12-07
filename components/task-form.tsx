@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,7 +18,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/useModalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
+import qs from "qs";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Icons } from "./icons";
@@ -49,20 +50,20 @@ export default function TaskForm() {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // try {
-    //   const url = qs.stringifyUrl({
-    //     url: "/api/channels",
-    //     query: {
-    //       serverId: params?.serverId,
-    //     },
-    //   });
-    //   await axios.post(url, values);
-    //   form.reset();
-    //   router.refresh();
-    //   onClose();
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const url = qs.stringifyUrl({
+        url: "/api/tasks",
+        query: {
+          serverId: params?.serverId,
+        },
+      });
+      await axios.post(url, values);
+      form.reset();
+      router.refresh();
+      onClose();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClose = () => {
@@ -124,7 +125,7 @@ export default function TaskForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit">
+            <Button type="submit" className="float-right">
               {isLoading ? (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               ) : (

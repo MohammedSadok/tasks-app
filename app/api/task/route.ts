@@ -1,23 +1,21 @@
-// import { getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth/next";
 import * as z from "zod";
 
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { RequiresProPlanError } from "@/lib/exceptions";
-import { postRequestSchema } from "@/lib/validations/request";
 
-const postCreateSchema = z.object({
+const taskCreateSchema = z.object({
   title: z.string(),
-  content: z.string().optional(),
-  imageUrl: z.string().min(1).optional(),
+  text: z.string(),
 });
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const pageParam = searchParams.get("page");
-  const searchParam = searchParams.get("search");
-  const page = pageParam !== null ? parseInt(pageParam) : 1;
-  const search = searchParam !== null ? searchParam : "";
+  // const { searchParams } = new URL(req.url);
+  // const pageParam = searchParams.get("page");
+  // const searchParam = searchParams.get("search");
+  // const page = pageParam !== null ? parseInt(pageParam) : 1;
+  // const search = searchParam !== null ? searchParam : "";
 
   try {
     const session = await getServerSession(authOptions);
@@ -27,25 +25,35 @@ export async function GET(req: Request) {
     }
 
     const { user } = session;
-    const posts = await db.post.findMany({
-      take: 2,
-      skip: (page - 1) * 2,
+    // const posts = await db.post.findMany({
+    //   take: 2,
+    //   skip: (page - 1) * 2,
+    //   select: {
+    //     id: true,
+    //     title: true,
+    //     published: true,
+    //     createdAt: true,
+    //     imageUrl: true,
+    //   },
+    //   where: {
+    //     title: {
+    //       contains: search,
+    //     },
+    //     authorId: user.id,
+    //   },
+    // });
+    const tasks = await db.task.findMany({
       select: {
         id: true,
         title: true,
-        published: true,
+        text: true,
+        isCompleted: true,
         createdAt: true,
-        imageUrl: true,
-      },
-      where: {
-        title: {
-          contains: search,
-        },
-        authorId: user.id,
+        updatedAt: true,
       },
     });
 
-    return new Response(JSON.stringify(posts));
+    return new Response(JSON.stringify(tasks));
   } catch (error) {
     return new Response(null, { status: 500 });
   }
@@ -62,30 +70,24 @@ export async function POST(req: Request) {
     const { user } = session;
 
     const json = await req.json();
-    const body = postCreateSchema.parse(json);
+    const body = taskCreateSchema.parse(json);
 
-    const post = await db.post.create({
+    const task = await db.task.create({
       data: {
         title: body.title,
-        content: body.content,
+        text: body.text,
         authorId: session.user.id,
-        imageUrl: body.imageUrl,
       },
       select: {
         id: true,
       },
     });
 
-    return new Response(JSON.stringify(post));
+    return new Response(JSON.stringify(task));
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 });
     }
-
-    if (error instanceof RequiresProPlanError) {
-      return new Response("Requires Pro Plan", { status: 402 });
-    }
-
     return new Response(null, { status: 500 });
   }
 }
