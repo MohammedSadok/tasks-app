@@ -2,8 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import * as React from "react";
-
-import { Icons } from "@/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,9 +21,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
 import { useModal } from "@/hooks/useModalStore";
+import { Loader2, MoreVertical, Trash } from "lucide-react";
 
 async function deletePost(postId: string) {
-  const response = await fetch(`/api/posts/${postId}`, {
+  const response = await fetch(`/api/task/${postId}`, {
     method: "DELETE",
   });
 
@@ -34,6 +33,11 @@ async function deletePost(postId: string) {
       title: "Something went wrong.",
       description: "Your post was not deleted. Please try again.",
       variant: "destructive",
+    });
+  } else {
+    toast({
+      title: "Task deleted successfully.",
+      variant: "default",
     });
   }
 
@@ -45,25 +49,25 @@ interface PostOperationsProps {
 }
 
 export function PostOperations({ taskId }: PostOperationsProps) {
-  const { isOpen, onClose, type, data, onOpen } = useModal();
+  const { onOpen } = useModal();
   const router = useRouter();
   const [showDeleteAlert, setShowDeleteAlert] = React.useState<boolean>(false);
   const [isDeleteLoading, setIsDeleteLoading] = React.useState<boolean>(false);
   const handleEditTask = async () => {
-    const response = await fetch(`/api/task/?taskId=${taskId}`, {
+    const response = await fetch(`/api/task/${taskId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
     const data = await response.json();
-    onOpen("createTask", data[0]);
+    onOpen("editTask", data);
   };
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted">
-          <Icons.ellipsis className="h-4 w-4" />
+          <MoreVertical className="h-4 w-4" />
           <span className="sr-only">Open</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -110,9 +114,9 @@ export function PostOperations({ taskId }: PostOperationsProps) {
               className="bg-red-600 focus:ring-red-600"
             >
               {isDeleteLoading ? (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <Icons.trash className="mr-2 h-4 w-4" />
+                <Trash className="mr-2 h-4 w-4" />
               )}
               <span>Delete</span>
             </AlertDialogAction>

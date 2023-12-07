@@ -1,7 +1,6 @@
-import { getServerSession } from "next-auth";
-import * as z from "zod";
 import { db } from "@/lib/db";
 import { taskPatchSchema } from "@/lib/validations/task";
+import * as z from "zod";
 
 const routeContextSchema = z.object({
   params: z.object({
@@ -19,7 +18,7 @@ export async function DELETE(
     // Delete the task.
     await db.task.delete({
       where: {
-        id: params.taskId as string,
+        id: params.taskId,
       },
     });
 
@@ -45,7 +44,6 @@ export async function PATCH(
     const body = taskPatchSchema.parse(json);
 
     // Update the task.
-    // TODO: Implement sanitization for content.
     await db.task.update({
       where: {
         id: params.taskId,
@@ -53,7 +51,7 @@ export async function PATCH(
       data: {
         title: body.title,
         text: body.text,
-        isCompleted: body.isCompleted,
+        isCompleted: body?.isCompleted,
       },
     });
 
@@ -74,13 +72,6 @@ export async function GET(
   try {
     // Validate route params.
     const { params } = routeContextSchema.parse(context);
-
-    // Get the request body and validate it.
-    const json = await req.json();
-    const body = taskPatchSchema.parse(json);
-
-    // Update the task.
-
     const task = await db.task.findFirst({
       select: {
         id: true,

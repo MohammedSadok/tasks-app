@@ -1,5 +1,9 @@
+import { MainNav } from "@/components/main-nav";
+import { ModeToggle } from "@/components/mode-toggle";
 import { Toaster } from "@/components/ui/toaster";
+import { dashboardConfig } from "@/config/dashboard";
 import { cn } from "@/lib/utils";
+import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
@@ -31,7 +35,20 @@ export default function RootLayout({
       >
         {/* <QueryProvider> */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <div className="flex min-h-screen flex-col space-y-6">
+            <header className="sticky top-0 z-40 border-b bg-background">
+              <div className="container flex h-16 items-center justify-between py-4">
+                <MainNav/>
+                <div className="flex justify-center items-center space-x-2">
+                  <ModeToggle />
+                </div>
+              </div>
+            </header>
+            <main className="flex w-full flex-1 flex-col overflow-hidden container">
+              {children}
+              <ModalProvider />
+            </main>
+          </div>
           <Toaster />
         </ThemeProvider>
         {/* </QueryProvider> */}

@@ -3,6 +3,7 @@ import { create } from "zustand";
 export type ModalType = "createTask" | "editTask" | "deleteTask";
 
 interface ModalData {
+  id: string;
   text: string;
   title: string;
 }
@@ -17,9 +18,9 @@ interface ModalStore {
 
 export const useModal = create<ModalStore>((set) => ({
   type: null,
-  data: { text: "", title: "" },
+  data: { text: "", title: "", id: "" },
   isOpen: false,
-  onOpen: (type, data = { text: "", title: "" }) =>
+  onOpen: (type, data = { text: "", title: "", id: "" }) =>
     set({ isOpen: true, type, data }),
   onClose: () => set({ type: null, isOpen: false }),
 }));

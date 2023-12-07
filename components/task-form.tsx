@@ -18,11 +18,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/useModalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams, useRouter } from "next/navigation";
+import { Loader2, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Icons } from "./icons";
 import { Textarea } from "./ui/textarea";
 const formSchema = z.object({
   title: z.string().min(5, {
@@ -34,11 +34,8 @@ const formSchema = z.object({
 export default function TaskForm() {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
-  const params = useParams();
-  const { text, title } = data;
-  console.log("=>  file: task-form.tsx:39  TaskForm  data:", data.text);
-  const isModalOpen = isOpen && type === "createTask";
-
+  const { text, title, id } = data;
+  const isModalOpen = isOpen && (type === "createTask" || type === "editTask");
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,21 +48,34 @@ export default function TaskForm() {
       form.setValue("text", text);
       form.setValue("title", title);
     }
-  }, [form, title, text, data]);
+  }, [form, title, text, data, id]);
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await fetch(`/api/task/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: values.title,
-          text: values.text,
-        }),
-      });
+      if (type === "createTask") {
+        await fetch(`/api/task`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: values.title,
+            text: values.text,
+          }),
+        });
+      } else if (type === "editTask") {
+        await fetch(`/api/task/${id}`, {
+          method: "PATCH", // Change the method to PATCH
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: values.title,
+            text: values.text,
+          }),
+        });
+      }
       form.reset();
       router.refresh();
       onClose();
@@ -135,11 +145,11 @@ export default function TaskForm() {
             />
             <Button type="submit" className="float-right">
               {isLoading ? (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <Icons.add className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4" />
               )}
-              New Task
+              {type === "createTask" ? "New Task" : "Update Task"}
             </Button>
           </form>
         </Form>
