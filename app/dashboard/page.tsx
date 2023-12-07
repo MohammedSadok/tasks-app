@@ -5,25 +5,15 @@ import { EmptyPlaceholder } from "@/components/empty-placeholder";
 import { DashboardHeader } from "@/components/header";
 import { PostCreateButton } from "@/components/post-create-button";
 import { DashboardShell } from "@/components/shell";
-import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getCurrentUser } from "@/lib/session";
 
 export const metadata = {
   title: "Dashboard",
 };
 
 export default async function DashboardPage() {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    redirect(authOptions?.pages?.signIn || "/login");
-  }
 
   const tasks = await db.task.findMany({
-    where: {
-      authorId: user.id,
-    },
     select: {
       id: true,
       title: true,

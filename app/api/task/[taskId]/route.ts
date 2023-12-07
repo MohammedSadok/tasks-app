@@ -1,7 +1,5 @@
 import { getServerSession } from "next-auth";
 import * as z from "zod";
-
-import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { taskPatchSchema } from "@/lib/validations/task";
 
@@ -18,12 +16,6 @@ export async function DELETE(
   try {
     // Validate the route params.
     const { params } = routeContextSchema.parse(context);
-
-    // Check if the user has access to this task.
-    if (!(await verifyCurrentUserHasAccessTotask(params.taskId))) {
-      return new Response(null, { status: 403 });
-    }
-
     // Delete the task.
     await db.task.delete({
       where: {
@@ -36,7 +28,6 @@ export async function DELETE(
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 });
     }
-
     return new Response(null, { status: 500 });
   }
 }
@@ -48,11 +39,6 @@ export async function PATCH(
   try {
     // Validate route params.
     const { params } = routeContextSchema.parse(context);
-
-    // Check if the user has access to this task.
-    if (!(await verifyCurrentUserHasAccessTotask(params.taskId))) {
-      return new Response(null, { status: 403 });
-    }
 
     // Get the request body and validate it.
     const json = await req.json();
@@ -117,15 +103,4 @@ export async function GET(
 
     return new Response(null, { status: 500 });
   }
-}
-async function verifyCurrentUserHasAccessTotask(taskId: string) {
-  const session = await getServerSession(authOptions);
-  const count = await db.task.count({
-    where: {
-      id: taskId,
-      authorId: session?.user.id,
-    },
-  });
-
-  return count > 0;
 }
