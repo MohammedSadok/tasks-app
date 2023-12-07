@@ -18,9 +18,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/useModalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import qs from "qs";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Icons } from "./icons";
@@ -36,7 +35,8 @@ export default function TaskForm() {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
   const params = useParams();
-
+  const { text, title } = data;
+  console.log("=>  file: task-form.tsx:39  TaskForm  data:", data.text);
   const isModalOpen = isOpen && type === "createTask";
 
   const form = useForm({
@@ -46,18 +46,26 @@ export default function TaskForm() {
       text: "",
     },
   });
-
+  useEffect(() => {
+    if (data) {
+      form.setValue("text", text);
+      form.setValue("title", title);
+    }
+  }, [form, title, text, data]);
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const url = qs.stringifyUrl({
-        url: "/api/tasks",
-        query: {
-          serverId: params?.serverId,
+      const response = await fetch(`/api/task/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          title: values.title,
+          text: values.text,
+        }),
       });
-      await axios.post(url, values);
       form.reset();
       router.refresh();
       onClose();
@@ -77,7 +85,7 @@ export default function TaskForm() {
           <DialogTitle>Create task</DialogTitle>
           {type === "editTask" && (
             <DialogDescription>
-              Make changes to your task here. Click save when you're done.
+              Make changes to your task here. Click save when youre done.
             </DialogDescription>
           )}
         </DialogHeader>

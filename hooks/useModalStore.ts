@@ -1,16 +1,10 @@
-import { Post } from "@prisma/client";
 import { create } from "zustand";
 
-export type ModalType =
-  | "createTask"
-  | "editTask"
-  | "deleteTask";
+export type ModalType = "createTask" | "editTask" | "deleteTask";
 
 interface ModalData {
-  id?: string;
-  text?: string;
-  title?: string;
-  done?: boolean;
+  text: string;
+  title: string;
 }
 
 interface ModalStore {
@@ -23,8 +17,9 @@ interface ModalStore {
 
 export const useModal = create<ModalStore>((set) => ({
   type: null,
-  data: {},
+  data: { text: "", title: "" },
   isOpen: false,
-  onOpen: (type, data = {}) => set({ isOpen: true, type, data }),
+  onOpen: (type, data = { text: "", title: "" }) =>
+    set({ isOpen: true, type, data }),
   onClose: () => set({ type: null, isOpen: false }),
 }));
