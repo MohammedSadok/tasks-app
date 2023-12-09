@@ -1,10 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Post } from "@prisma/client"
-
+import { useRouter } from "next/navigation";
+import * as React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,54 +11,70 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { toast } from "@/components/ui/use-toast"
-import { Icons } from "@/components/icons"
+} from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/use-toast";
+import { useModal } from "@/hooks/useModalStore";
+import { Loader2, MoreVertical, Trash } from "lucide-react";
 
 async function deletePost(postId: string) {
-  const response = await fetch(`/api/posts/${postId}`, {
+  const response = await fetch(`/api/task/${postId}`, {
     method: "DELETE",
-  })
-
+  });
   if (!response?.ok) {
     toast({
       title: "Something went wrong.",
       description: "Your post was not deleted. Please try again.",
       variant: "destructive",
-    })
+    });
+  } else {
+    toast({
+      title: "Task deleted successfully.",
+      variant: "default",
+    });
   }
 
-  return true
+  return true;
 }
 
-interface PostOperationsProps {
-  post: Pick<Post, "id" | "title">
+interface TaskOperationsProps {
+  taskId: string;
 }
 
-export function PostOperations({ post }: PostOperationsProps) {
-  const router = useRouter()
-  const [showDeleteAlert, setShowDeleteAlert] = React.useState<boolean>(false)
-  const [isDeleteLoading, setIsDeleteLoading] = React.useState<boolean>(false)
-
+export function TaskOperations({ taskId }: TaskOperationsProps) {
+  const { onOpen } = useModal();
+  const router = useRouter();
+  const [showDeleteAlert, setShowDeleteAlert] = React.useState<boolean>(false);
+  const [isDeleteLoading, setIsDeleteLoading] = React.useState<boolean>(false);
+  const handleEditTask = async () => {
+    const response = await fetch(`/api/task/${taskId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    onOpen("editTask", data);
+  };
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted">
-          <Icons.ellipsis className="h-4 w-4" />
+          <MoreVertical className="h-4 w-4" />
           <span className="sr-only">Open</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            <Link href={`/editor/${post.id}`} className="flex w-full">
-              Edit
-            </Link>
+          <DropdownMenuItem
+            className="flex cursor-pointer items-center"
+            onSelect={handleEditTask}
+          >
+            Edit
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -86,23 +99,23 @@ export function PostOperations({ post }: PostOperationsProps) {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={async (event) => {
-                event.preventDefault()
-                setIsDeleteLoading(true)
+                event.preventDefault();
+                setIsDeleteLoading(true);
 
-                const deleted = await deletePost(post.id)
+                const deleted = await deletePost(taskId);
 
                 if (deleted) {
-                  setIsDeleteLoading(false)
-                  setShowDeleteAlert(false)
-                  router.refresh()
+                  setIsDeleteLoading(false);
+                  setShowDeleteAlert(false);
+                  router.refresh();
                 }
               }}
               className="bg-red-600 focus:ring-red-600"
             >
               {isDeleteLoading ? (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <Icons.trash className="mr-2 h-4 w-4" />
+                <Trash className="mr-2 h-4 w-4" />
               )}
               <span>Delete</span>
             </AlertDialogAction>
@@ -110,5 +123,5 @@ export function PostOperations({ post }: PostOperationsProps) {
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }

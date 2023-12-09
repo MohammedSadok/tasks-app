@@ -1,16 +1,11 @@
-import { Post } from "@prisma/client";
 import { create } from "zustand";
 
-export type ModalType =
-  | "createTask"
-  | "editTask"
-  | "deleteTask";
+export type ModalType = "createTask" | "editTask";
 
 interface ModalData {
   id?: string;
   text?: string;
   title?: string;
-  done?: boolean;
 }
 
 interface ModalStore {

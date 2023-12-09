@@ -1,10 +1,12 @@
+import { MainNav } from "@/components/MainNav";
+import { ModeToggle } from "@/components/ModeToggle";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
-// import QueryProvider from "@/providers/QueryProvider";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -29,12 +31,23 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        {/* <QueryProvider> */}
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+        {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
+          <div className="flex min-h-screen flex-col space-y-6">
+            <header className="sticky top-0 z-40 border-b bg-background">
+              <div className="container flex h-16 items-center justify-between py-4">
+                <MainNav />
+                <div className="flex justify-center items-center space-x-2">
+                  {/* <ModeToggle /> */}
+                </div>
+              </div>
+            </header>
+            <main className="flex w-full flex-1 flex-col overflow-hidden container">
+              {children}
+              <ModalProvider />
+            </main>
+          </div>
           <Toaster />
-        </ThemeProvider>
-        {/* </QueryProvider> */}
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );

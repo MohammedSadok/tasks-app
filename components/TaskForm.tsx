@@ -17,28 +17,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/useModalStore";
+import { formSchema } from "@/lib/validations/task";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
-import qs from "qs";
+import { Loader2, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Icons } from "./icons";
 import { Textarea } from "./ui/textarea";
-const formSchema = z.object({
-  title: z.string().min(5, {
-    message: "Task title is required.",
-  }),
-  text: z.string().min(5, { message: "Task title is required" }),
-});
 
 export default function TaskForm() {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
-  const params = useParams();
-
-  const isModalOpen = isOpen && type === "createTask";
-
+  const { text, title, id } = data;
+  const isModalOpen = isOpen && (type === "createTask" || type === "editTask");
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,18 +38,39 @@ export default function TaskForm() {
       text: "",
     },
   });
-
+  useEffect(() => {
+    if (data) {
+      form.setValue("text", text);
+      form.setValue("title", title);
+    }
+  }, [form, title, text, data, id]);
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const url = qs.stringifyUrl({
-        url: "/api/tasks",
-        query: {
-          serverId: params?.serverId,
-        },
-      });
-      await axios.post(url, values);
+      if (type === "createTask") {
+        await fetch(`/api/task`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: values.title,
+            text: values.text,
+          }),
+        });
+      } else if (type === "editTask") {
+        await fetch(`/api/task/${id}`, {
+          method: "PATCH", // Change the method to PATCH
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: values.title,
+            text: values.text,
+          }),
+        });
+      }
       form.reset();
       router.refresh();
       onClose();
@@ -72,12 +85,12 @@ export default function TaskForm() {
   };
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] dark:bg-zinc-800">
         <DialogHeader>
           <DialogTitle>Create task</DialogTitle>
           {type === "editTask" && (
             <DialogDescription>
-              Make changes to your task here. Click save when you're done.
+              Make changes to your task here. Click save when youre done.
             </DialogDescription>
           )}
         </DialogHeader>
@@ -94,7 +107,7 @@ export default function TaskForm() {
                   <FormControl>
                     <Input
                       disabled={isLoading}
-                      className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white"
                       placeholder="Enter task title"
                       {...field}
                     />
@@ -117,7 +130,7 @@ export default function TaskForm() {
                       placeholder="Type your message here."
                       id="message"
                       disabled={isLoading}
-                      className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white"
                       {...field}
                     />
                   </FormControl>
@@ -127,11 +140,11 @@ export default function TaskForm() {
             />
             <Button type="submit" className="float-right">
               {isLoading ? (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <Icons.add className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4" />
               )}
-              New Task
+              {type === "createTask" ? "New Task" : "Update Task"}
             </Button>
           </form>
         </Form>
