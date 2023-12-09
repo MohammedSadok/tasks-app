@@ -20,7 +20,8 @@ install the required dependencies:
 npm i
 ```
 
-1. create a route handler inside api folder
+1. Inside the api/task folder, create a new folder named [taskId].
+2. Inside the [taskId] folder, create a file named route.tsx.
 
 ```tsx
 // Import necessary modules and types
@@ -66,7 +67,8 @@ export async function GET(
 }
 ```
 
-2. create a new foldre in app folder with name [task]
+1. Inside the app folder, create a new folder named [task].
+2. Inside the [task] folder, create a file named page.tsx.
 
 ```tsx
 import { formatDate } from "@/lib/utils";
@@ -140,7 +142,6 @@ export default function TaskLoading() {
 ```
 
 # Bonus
-
 
 1. Create a theme provider:
 
@@ -230,6 +231,7 @@ export default function TaskLoading() {
    ```
 
 ---
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

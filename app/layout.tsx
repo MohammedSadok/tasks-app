@@ -31,13 +31,13 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
           <div className="flex min-h-screen flex-col space-y-6">
             <header className="sticky top-0 z-40 border-b bg-background">
               <div className="container flex h-16 items-center justify-between py-4">
                 <MainNav />
                 <div className="flex justify-center items-center space-x-2">
-                  <ModeToggle />
+                  {/* <ModeToggle /> */}
                 </div>
               </div>
             </header>
@@ -47,7 +47,7 @@ export default function RootLayout({
             </main>
           </div>
           <Toaster />
-        </ThemeProvider>
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );
