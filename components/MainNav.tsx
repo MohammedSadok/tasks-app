@@ -4,7 +4,7 @@ import { Command, FileText, PieChart, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSelectedLayoutSegment } from "next/navigation";
 import * as React from "react";
-import { MobileNav } from "./mobile-nav";
+import { MobileNav } from "./MobileNav";
 export function MainNav() {
   const path = usePathname();
   const segment = useSelectedLayoutSegment();
@@ -26,17 +26,6 @@ export function MainNav() {
           >
             <FileText className="mr-2 h-4 w-4" />
             <span>Tasks</span>
-          </span>
-        </Link>
-        <Link href="/statistics">
-          <span
-            className={cn(
-              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-              path === "/statistics" ? "bg-accent" : "transparent"
-            )}
-          >
-            <PieChart className="mr-2 h-4 w-4" />
-            <span>Statistics</span>
           </span>
         </Link>
       </nav>

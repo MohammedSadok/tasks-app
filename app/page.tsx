@@ -1,9 +1,9 @@
+import { PostCreateButton } from "@/components/CreatTaskButton";
+import { DashboardHeader } from "@/components/Header";
+// import { TaskItem } from "@/components/TaskItem";
 import { TaskItem } from "@/components/TaskItem";
-import { DashboardHeader } from "@/components/header";
-import { PostCreateButton } from "@/components/post-create-button";
 import { db } from "@/lib/db";
 import { FileText } from "lucide-react";
-
 export const metadata = {
   title: "Dashboard",
 };
@@ -13,20 +13,19 @@ export default async function DashboardPage() {
     select: {
       id: true,
       title: true,
-      isCompleted: true,
+      text: true,
       createdAt: true,
+      isCompleted: true,
     },
     orderBy: {
       updatedAt: "desc",
     },
   });
-
   return (
     <div className="grid items-start gap-8">
       <DashboardHeader heading="Tasks" text="Create and manage tasks.">
         <PostCreateButton />
       </DashboardHeader>
-
       <div>
         {tasks?.length ? (
           <div className="divide-y divide-border rounded-md border">

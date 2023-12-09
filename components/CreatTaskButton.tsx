@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonProps, buttonVariants } from "@/components/ui/button";
+import { Button, ButtonProps, buttonVariants } from "@/components/ui/button";
 import { useModal } from "@/hooks/useModalStore";
 import { cn } from "@/lib/utils";
 
@@ -17,16 +17,12 @@ export function PostCreateButton({
   }
 
   return (
-    <button
+    <Button
       onClick={onClick}
-      className={cn(
-        buttonVariants({ variant }),
-
-        className
-      )}
+      className={cn(buttonVariants({ variant }), className)}
       {...props}
     >
       + New task
-    </button>
+    </Button>
   );
 }

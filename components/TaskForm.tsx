@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/useModalStore";
+import { formSchema } from "@/lib/validations/task";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -24,12 +25,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "./ui/textarea";
-const formSchema = z.object({
-  title: z.string().min(5, {
-    message: "Task title is required.",
-  }),
-  text: z.string().min(5, { message: "Task title is required" }),
-});
 
 export default function TaskForm() {
   const { isOpen, onClose, type, data } = useModal();
@@ -90,7 +85,7 @@ export default function TaskForm() {
   };
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] dark:bg-zinc-800">
         <DialogHeader>
           <DialogTitle>Create task</DialogTitle>
           {type === "editTask" && (
@@ -112,7 +107,7 @@ export default function TaskForm() {
                   <FormControl>
                     <Input
                       disabled={isLoading}
-                      className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white"
                       placeholder="Enter task title"
                       {...field}
                     />
@@ -135,7 +130,7 @@ export default function TaskForm() {
                       placeholder="Type your message here."
                       id="message"
                       disabled={isLoading}
-                      className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white"
                       {...field}
                     />
                   </FormControl>

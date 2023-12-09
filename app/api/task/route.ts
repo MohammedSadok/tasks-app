@@ -1,11 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import * as z from "zod";
 import { db } from "@/lib/db";
-
-const taskCreateSchema = z.object({
-  title: z.string(),
-  text: z.string(),
-});
+import { taskCreateSchema } from "@/lib/validations/task";
 
 export async function GET(req: Request) {
   // const { searchParams } = new URL(req.url);

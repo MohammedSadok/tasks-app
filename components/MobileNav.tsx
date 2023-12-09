@@ -1,12 +1,9 @@
 import Link from "next/link";
 
-import { useLockBody } from "@/hooks/use-lock-body";
 import { cn } from "@/lib/utils";
 import { Command } from "lucide-react";
 
 export function MobileNav() {
-  useLockBody();
-
   return (
     <div
       className={cn(
@@ -26,14 +23,6 @@ export function MobileNav() {
             )}
           >
             Tasks
-          </Link>
-          <Link
-            href={"/statistics"}
-            className={cn(
-              "flex w-full items-center rounded-md p-2 text-sm font-medium hover:underline"
-            )}
-          >
-            Statistics
           </Link>
         </nav>
       </div>

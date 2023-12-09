@@ -1,12 +1,6 @@
 import { db } from "@/lib/db";
-import { taskPatchSchema } from "@/lib/validations/task";
+import { routeContextSchema, taskPatchSchema } from "@/lib/validations/task";
 import * as z from "zod";
-
-const routeContextSchema = z.object({
-  params: z.object({
-    taskId: z.string(),
-  }),
-});
 
 export async function DELETE(
   req: Request,
@@ -49,8 +43,8 @@ export async function PATCH(
         id: params.taskId,
       },
       data: {
-        title: body.title,
-        text: body.text,
+        title: body?.title,
+        text: body?.text,
         isCompleted: body?.isCompleted,
       },
     });

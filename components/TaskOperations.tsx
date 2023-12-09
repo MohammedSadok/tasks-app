@@ -27,7 +27,6 @@ async function deletePost(postId: string) {
   const response = await fetch(`/api/task/${postId}`, {
     method: "DELETE",
   });
-
   if (!response?.ok) {
     toast({
       title: "Something went wrong.",
@@ -44,11 +43,11 @@ async function deletePost(postId: string) {
   return true;
 }
 
-interface PostOperationsProps {
+interface TaskOperationsProps {
   taskId: string;
 }
 
-export function PostOperations({ taskId }: PostOperationsProps) {
+export function TaskOperations({ taskId }: TaskOperationsProps) {
   const { onOpen } = useModal();
   const router = useRouter();
   const [showDeleteAlert, setShowDeleteAlert] = React.useState<boolean>(false);
