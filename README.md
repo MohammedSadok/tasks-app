@@ -20,15 +20,9 @@ install the required dependencies:
 npm i
 ```
 
-1. Inside the api/task folder, create a new folder named [taskId].
-2. Inside the [taskId] folder, create a file named route.tsx.
+- Inside the [taskId]/route.tsx file, add this fuction bellow.
 
 ```tsx
-// Import necessary modules and types
-import { Request, Response } from "@vercel/node";
-import { routeContextSchema } from "@/lib/validations/context";
-import { db } from "@/lib/db"; // Assuming you have a database module
-
 // Define the GET function for fetching task details
 export async function GET(
   req: Request,
