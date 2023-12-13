@@ -164,35 +164,7 @@ export default function TaskLoading() {
    }
    ```
 
-2. Wrap your root layout:
-
-   **app/layout.tsx**
-
-   ```tsx
-   import { ThemeProvider } from "@/components/theme-provider";
-
-   export default function RootLayout({ children }: RootLayoutProps) {
-     return (
-       <>
-         <html lang="en" suppressHydrationWarning>
-           <head />
-           <body>
-             <ThemeProvider
-               attribute="class"
-               defaultTheme="system"
-               enableSystem
-               disableTransitionOnChange
-             >
-               {children}
-             </ThemeProvider>
-           </body>
-         </html>
-       </>
-     );
-   }
-   ```
-
-3. Add a mode toggle:
+2. Add a mode toggle:
 
    **components/mode-toggle.tsx**
 
@@ -237,7 +209,52 @@ export default function TaskLoading() {
    }
    ```
 
+3. Wrap your root layout:
+
+   **app/layout.tsx**
+
+```tsx
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        {/* Uncomment the three lines of code below to see the mode toggle in your navbar */}
+        {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
+        <div className="flex min-h-screen flex-col space-y-6">
+          <header className="sticky top-0 z-40 border-b bg-background">
+            <div className="container flex h-16 items-center justify-between py-4">
+              <MainNav />
+              <div className="flex justify-center items-center space-x-2">
+                {/* Uncomment the next line to include the ModeToggle component */}
+                {/* <ModeToggle /> */}
+              </div>
+            </div>
+          </header>
+          <main className="flex w-full flex-1 flex-col overflow-hidden container">
+            {children}
+            <ModalProvider />
+          </main>
+        </div>
+        <Toaster />
+        {/* </ThemeProvider> */}
+      </body>
+    </html>
+  );
+}
+```
+
 ---
+
+By uncommenting the lines related to ThemeProvider and ModeToggle, you should be able to see the mode toggle in your navbar when the component is rendered.
 
 ## Learn More
 
