@@ -20,6 +20,16 @@ install the required dependencies:
 npm i
 ```
 
+- Create the Database:
+  Open your MySQL client (e.g., MySQL Workbench, command line) and execute the following SQL command to create a database named 'tasks'
+  Locate your environment file (named .env) and update the DATABASE_URL with the MySQL connection information. In this case, assuming no password is set for the root user and the database is running on the default port (3306)
+
+```bash
+npx prisma db push
+```
+
+the command is telling Prisma to use the npx runner to execute the Prisma CLI and apply any pending database migrations using the db push command. This ensures that your database structure is synchronized with your Prisma schema, reflecting any changes you've made in your data model
+
 - Inside the [taskId]/route.tsx file, add this fuction bellow.
 
 ```tsx
@@ -77,6 +87,9 @@ const page = async ({ params }: { params: { task: string } }) => {
   // Fetch task details from the API
   const response = await fetch(`http://localhost:3000/api/task/${task}`, {
     method: "GET",
+    // Set cache attribute to "no-store" to avoid caching the response => this is SSR
+    // Set cache attribute to "force-cache" to explicitly request caching
+    // This is typically used for scenarios where you want to force caching of the response => this is the SSG
     cache: "no-store",
     headers: {
       "Content-Type": "application/json",
