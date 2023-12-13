@@ -33,7 +33,13 @@ npx prisma db push
 
 the command is telling Prisma to use the npx runner to execute the Prisma CLI and apply any pending database migrations using the db push command. This ensures that your database structure is synchronized with your Prisma schema, reflecting any changes you've made in your data model
 
-- Inside the `[taskId]/route.tsx` file, add this function bellow.
+## 1. Define GET Function:
+
+A GET function is defined inside the `[taskId]/route.tsx` file.
+
+It fetches task details from the database using Prisma's findFirst method.
+
+The fetched task details are returned in a JSON response.
 
 ```tsx
 // Define the GET function for fetching task details
@@ -74,8 +80,13 @@ export async function GET(
 }
 ```
 
-1. Inside the app folder, create a new folder named `[task]`.
-2. Inside the `[task]` folder, create a file named `page.tsx`.
+## 2. Create `[task]/page.tsx` File:
+
+A page is UI that is unique to a route.
+
+A `[task]/page.tsx` file is created with a React component that fetches task details from the API.
+
+The cache attribute in the fetch request is set to "no-store" to avoid caching the response.
 
 ```tsx
 import { formatDate } from "@/lib/utils";
@@ -125,7 +136,7 @@ const page = async ({ params }: { params: { task: string } }) => {
 export default page;
 ```
 
-3. create a `loading.tsx` file in the same folder
+1. create a `loading.tsx` file in the same folder
 
 ```tsx
 import { Skeleton } from "@/components/ui/skeleton";
