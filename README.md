@@ -20,9 +20,12 @@ install the required dependencies:
 npm i
 ```
 
-- Create the Database:
-  Open your MySQL client (e.g., MySQL Workbench, command line) and execute the following SQL command to create a database named 'tasks'
-  Locate your environment file (named .env) and update the DATABASE_URL with the MySQL connection information. In this case, assuming no password is set for the root user and the database is running on the default port (3306)
+- Create the Database
+
+  Open your MySQL client (e.g., MySQL Workbench, command line) and create a database named 'tasks'
+  Locate your environment file (named .env) and update the DATABASE_URL with the MySQL connection information.
+  `DATABASE_URL="mysql://root:@localhost:3306/tasks"`
+  In this case, assuming no password is set for the root user and the database is running on the default port (3306)
 
 ```bash
 npx prisma db push
@@ -30,7 +33,7 @@ npx prisma db push
 
 the command is telling Prisma to use the npx runner to execute the Prisma CLI and apply any pending database migrations using the db push command. This ensures that your database structure is synchronized with your Prisma schema, reflecting any changes you've made in your data model
 
-- Inside the [taskId]/route.tsx file, add this fuction bellow.
+- Inside the `[taskId]/route.tsx` file, add this function bellow.
 
 ```tsx
 // Define the GET function for fetching task details
@@ -71,8 +74,8 @@ export async function GET(
 }
 ```
 
-1. Inside the app folder, create a new folder named [task].
-2. Inside the [task] folder, create a file named page.tsx.
+1. Inside the app folder, create a new folder named `[task]`.
+2. Inside the `[task]` folder, create a file named `page.tsx`.
 
 ```tsx
 import { formatDate } from "@/lib/utils";
@@ -122,7 +125,7 @@ const page = async ({ params }: { params: { task: string } }) => {
 export default page;
 ```
 
-3. create a loading.tsx file in the same folder
+3. create a `loading.tsx` file in the same folder
 
 ```tsx
 import { Skeleton } from "@/components/ui/skeleton";
@@ -211,7 +214,9 @@ export default function TaskLoading() {
 
 3. Wrap your root layout:
 
-   **app/layout.tsx**
+By uncommenting the lines related to ThemeProvider and ModeToggle, you should be able to see the mode toggle in your navbar when the component is rendered.
+
+**app/layout.tsx**
 
 ```tsx
 export default function RootLayout({
@@ -253,8 +258,6 @@ export default function RootLayout({
 ```
 
 ---
-
-By uncommenting the lines related to ThemeProvider and ModeToggle, you should be able to see the mode toggle in your navbar when the component is rendered.
 
 ## Learn More
 
